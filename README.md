@@ -201,12 +201,131 @@ CloudFinWise/
 - `POST /query/azure`: Query Azure infrastructure
 - `POST /query`: Query both clouds
 
-## Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Development Workflow
+
+### Branch Strategy
+
+```
+main (production)
+  |
+  |--- qa (testing)
+  |     |
+  |     |--- develop (development)
+  |           |
+  |           |--- feature/xyz
+  |           |--- feature/abc
+  |           |--- bugfix/xyz
+```
+
+### Branches
+
+1. **main** (production)
+   - Stable, production-ready code
+   - Protected branch - requires PR approval
+   - Tagged with version numbers
+   - Deployed to production environment
+
+2. **qa** (testing)
+   - Integration testing branch
+   - Code ready for QA testing
+   - Deployed to QA environment
+   - Merges into main after QA approval
+
+3. **develop** (development)
+   - Main development branch
+   - Feature branches merge here
+   - Deployed to development environment
+   - Merges into qa after development team approval
+
+4. **feature/** (features)
+   - New features and enhancements
+   - Created from develop
+   - Merged back to develop
+   - Naming: feature/descriptive-name
+
+5. **bugfix/** (bug fixes)
+   - Bug fixes for development
+   - Created from develop
+   - Merged back to develop
+   - Naming: bugfix/issue-description
+
+6. **hotfix/** (emergency fixes)
+   - Emergency production fixes
+   - Created from main
+   - Merged to both main and develop
+   - Naming: hotfix/issue-description
+
+### Workflow
+
+1. **Feature Development**
+   ```bash
+   # Start a new feature
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/new-feature
+   
+   # Work on feature
+   git add .
+   git commit -m "feat: add new feature"
+   
+   # Push feature
+   git push origin feature/new-feature
+   
+   # Create PR to develop
+   ```
+
+2. **QA Testing**
+   ```bash
+   # After feature is approved and merged to develop
+   git checkout qa
+   git pull origin develop
+   git push origin qa
+   ```
+
+3. **Production Release**
+   ```bash
+   # After QA approval
+   git checkout main
+   git pull origin qa
+   git tag -a v1.0.0 -m "Release v1.0.0"
+   git push origin main --tags
+   ```
+
+### Commit Message Format
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer]
+```
+
+Types:
+- feat: New feature
+- fix: Bug fix
+- docs: Documentation
+- style: Formatting
+- refactor: Code restructuring
+- test: Adding tests
+- chore: Maintenance
+
+Example:
+```bash
+feat(scanner): add Azure VM size analysis
+
+Add capability to analyze VM sizes and suggest cost optimizations.
+
+Closes #123
+```
+
+### Pull Request Process
+
+1. Update documentation
+2. Add/update tests
+3. Get code review from 2 team members
+4. Pass all CI/CD checks
+5. Squash commits before merging
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
