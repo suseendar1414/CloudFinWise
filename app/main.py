@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException
+from monitoring.query_parser import MetricQuery
+from monitoring.metric_fetcher import MetricFetcher, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from typing import Dict
@@ -161,6 +163,31 @@ async def query_azure_infrastructure(request: dict, db: Session = Depends(get_db
             "answer": f"Error analyzing Azure infrastructure: {str(e)}",
             "cloud": "azure",
             "error": "query_error"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/metrics")
+async def get_metrics(request: dict):
+    """Get infrastructure metrics based on natural language query."""
+    try:
+        query = request.get("question")
+        cloud_provider = request.get("cloud_provider", "aws").lower()
+        
+        if not query:
+            raise HTTPException(status_code=400, detail="Question is required")
+            
+        # Parse the natural language query
+        metric_query = MetricQuery.from_natural_language(query)
+        
+        # Fetch metrics
+        metric_data = await metric_fetcher.fetch_metrics(metric_query, cloud_provider)
+        
+        return {
+            "query": query,
+            "metric_data": metric_data,
+            "cloud_provider": cloud_provider
         }
         
     except Exception as e:
