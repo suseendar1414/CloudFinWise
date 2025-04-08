@@ -35,7 +35,7 @@ def scan_aws(services=None):
         params = {}
         if services:
             params['services'] = services
-        response = requests.post("http://localhost:8006/scan/aws", params=params)
+        response = requests.post("http://localhost:8007/scan/aws", params=params)
         return response.json()
     except Exception as e:
         st.error(f"Error scanning AWS: {str(e)}")
@@ -47,7 +47,7 @@ def scan_azure(subscription_id, services=None):
         params = {'subscription_id': subscription_id}
         if services:
             params['services'] = services
-        response = requests.post("http://localhost:8006/scan/azure", params=params)
+        response = requests.post("http://localhost:8007/scan/azure", params=params)
         return response.json()
     except Exception as e:
         st.error(f"Error scanning Azure: {str(e)}")
@@ -57,7 +57,7 @@ def query_aws(question):
     """Query AWS infrastructure using natural language"""
     try:
         response = requests.post(
-            "http://localhost:8006/query/aws",
+            "http://localhost:8007/query/aws",
             json={"question": question}
         )
         return response.json()
@@ -69,7 +69,7 @@ def query_azure(question):
     """Query Azure infrastructure using natural language"""
     try:
         response = requests.post(
-            "http://localhost:8006/query/azure",
+            "http://localhost:8007/query/azure",
             json={"question": question}
         )
         return response.json()
@@ -81,7 +81,7 @@ def query_all(question):
     """Query both AWS and Azure infrastructure"""
     try:
         response = requests.post(
-            "http://localhost:8006/query",
+            "http://localhost:8007/query",
             json={"question": question}
         )
         return response.json()
